@@ -23,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -77,19 +76,19 @@ fun ReactionGame() {
     var isGameRunning by remember { mutableStateOf(false) }
     var gameStartTime by remember { mutableStateOf(0L) }
     var beaverStartedTime by remember { mutableStateOf(0L) }
-    var beaverCatchedTime = mutableStateListOf<Long>()
+    val beaverCatchedTime by remember { mutableStateOf(mutableListOf<Long>()) }
+
     var elapsedTime by remember { mutableStateOf(0f) }
     var targetPosition by remember {
         mutableStateOf(Pair(0f, 0f))
     }
 
-    // Screen dimensions
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp - 50.dp
+    val screenHeight = configuration.screenHeightDp.dp - 50.dp
 
     val scope = rememberCoroutineScope()
-    // Game state management
+
     LaunchedEffect(isGameRunning) {
         if (isGameRunning) {
             gameStartTime = System.currentTimeMillis()
@@ -120,7 +119,7 @@ fun ReactionGame() {
         scope.launch {
             while (isGameRunning) {
                 moveTarget()
-                delay(1000)
+                delay(1500)
             }
 
         }
@@ -163,9 +162,9 @@ fun ReactionGame() {
                     .clickable {
                         if (isGameRunning) {
                             scope.launch {
-                                beaverCatchedTime.add(beaverStartedTime - System.currentTimeMillis())
+                                beaverCatchedTime.add(System.currentTimeMillis() - beaverStartedTime)
                                 score++
-                                delay(1000)
+                                delay(2000)
                                 moveTarget()
                             }
 
@@ -181,12 +180,24 @@ fun ReactionGame() {
             ) {
                 if (elapsedTime >= 30f) {
                     Text(
-                        text = "Game Over!\nFinal Score: $score \n ${beaverCatchedTime.toList()}",
+                        text = "Game Over!\nFinal Score: $score " +
+                                "User average reaction: ->\n ${
+                                    averageUsingLoop(
+                                        beaverCatchedTime
+                                    )
+                                } ms",
                         fontSize = 24.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                 }
+                Text(
+                    text = "Catch the Beaver",
+                    fontSize = 24.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
                 Button(
                     onClick = { startGame() }
                 ) {
@@ -198,4 +209,11 @@ fun ReactionGame() {
             }
         }
     }
+}
+
+fun averageUsingLoop(numbers: List<Long>): Double {
+    var sum = 0.0
+    numbers.forEach { sum += it }
+    val average = sum / numbers.size
+    return average
 }
