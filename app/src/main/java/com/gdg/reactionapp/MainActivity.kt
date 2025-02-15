@@ -181,7 +181,7 @@ fun ReactionGame() {
                 if (elapsedTime >= 30f) {
                     Text(
                         text = "Game Over!\nFinal Score: $score " +
-                                "User average reaction: ->\n ${
+                                " \n User average reaction: -> ${
                                     averageUsingLoop(
                                         beaverCatchedTime
                                     )
