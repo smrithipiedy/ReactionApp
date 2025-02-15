@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.gdg.reactionapp.ui.theme.ReactionAppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
@@ -184,7 +185,7 @@ fun ReactionGame() {
                                 " \n User average reaction: -> ${
                                     averageUsingLoop(
                                         beaverCatchedTime
-                                    )
+                                    ).roundToInt()
                                 } ms",
                         fontSize = 24.sp,
                         textAlign = TextAlign.Center,
