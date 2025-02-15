@@ -117,6 +117,7 @@ fun ReactionGame() {
         score = 0
         elapsedTime = 0f
         isGameRunning = true
+        beaverCatchedTime.toMutableList().clear()
         scope.launch {
             while (isGameRunning) {
                 moveTarget()
@@ -180,13 +181,18 @@ fun ReactionGame() {
                 verticalArrangement = Arrangement.Center
             ) {
                 if (elapsedTime >= 30f) {
-                    Text(
-                        text = "Game Over!\nFinal Score: $score " +
+                    val text = if (score > 0) {
+                        "Game Over!\nFinal Score: $score " +
                                 " \n User average reaction: -> ${
                                     averageUsingLoop(
                                         beaverCatchedTime
                                     ).roundToInt()
-                                } ms",
+                                } ms"
+                    } else {
+                        "Are you alive!!?"
+                    }
+                    Text(
+                        text = text,
                         fontSize = 24.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 16.dp)
